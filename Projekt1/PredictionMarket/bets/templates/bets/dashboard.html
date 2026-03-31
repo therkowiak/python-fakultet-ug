@@ -43,6 +43,45 @@
             </div>
 
             <div class="col-md-8">
+                <!-- Sekcja komunikatów o rozliczeniach -->
+                {% if user_messages %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header {% if user_messages.0.message_type == 'win' %}bg-success{% elif user_messages.0.message_type == 'loss' %}bg-danger{% else %}bg-info{% endif %} text-white">
+                        <h5 class="mb-0">📬 Ostatnie wiadomości</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            {% for msg in user_messages %}
+                            <div class="list-group-item {% if msg.message_type == 'win' %}border-success border-start border-4{% elif msg.message_type == 'loss' %}border-danger border-start border-4{% endif %}">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">
+                                            {% if msg.message_type == 'win' %}
+                                                🎉 
+                                            {% elif msg.message_type == 'loss' %}
+                                                ❌ 
+                                            {% else %}
+                                                ℹ️ 
+                                            {% endif %}
+                                            {{ msg.title }}
+                                        </h6>
+                                        <p class="mb-2 text-muted small">{{ msg.content|linebreaks }}</p>
+                                        <small class="text-muted">{{ msg.created_at|date:"d.m.Y H:i" }}</small>
+                                    </div>
+                                    {% if msg.amount > 0 %}
+                                    <span class="badge bg-{% if msg.message_type == 'win' %}success{% else %}light{% endif %} text-dark ms-2">
+                                        {{ msg.amount }} €
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Sekcja zakładów -->
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white">
                         <h5 class="mb-0">Twoje aktywne zakłady</h5>
@@ -54,6 +93,7 @@
                                     <th>Wydarzenie</th>
                                     <th>Twój Typ</th>
                                     <th>Stawka</th>
+                                    <th>Status</th>
                                     <th>Akcja</th>
                                 </tr>
                             </thead>
@@ -64,19 +104,30 @@
                                     <td>{{ bet.option.name }}</td>
                                     <td><strong>{{ bet.amount }} €</strong></td>
                                     <td>
-                                        {% if bet.option.event.is_active %}
-                                        <form method="POST" action="{% url 'cancel_bet' bet.id %}">
+                                        {% if bet.is_resolved %}
+                                            {% if bet.is_won %}
+                                                <span class="badge bg-success">✓ Wygrana</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">✗ Przegrana</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="badge bg-warning">⏳ W trakcie</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if bet.option.event.is_active and not bet.is_resolved %}
+                                        <form method="POST" action="{% url 'cancel_bet' bet.id %}" style="display: inline;">
                                             {% csrf_token %}
                                             <button type="submit" class="btn btn-sm btn-danger">Anuluj</button>
                                         </form>
                                         {% else %}
-                                        <span class="badge bg-secondary">Zakończone</span>
+                                            <span class="text-muted">-</span>
                                         {% endif %}
                                     </td>
                                 </tr>
                                 {% empty %}
                                 <tr>
-                                    <td colspan="4" class="text-center py-4 text-muted">Nie obstawiłeś jeszcze żadnego
+                                    <td colspan="5" class="text-center py-4 text-muted">Nie obstawiłeś jeszcze żadnego
                                         wydarzenia.</td>
                                 </tr>
                                 {% endfor %}
