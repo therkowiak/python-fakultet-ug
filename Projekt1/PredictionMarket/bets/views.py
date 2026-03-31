@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from .models import Event, UserProfile
+from .models import Event, UserProfile, Message
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -86,6 +86,7 @@ def dashboard(request):
         profile.save()
     
     user_bets = request.user.bets.select_related('option__event').order_by('-created_at')
+    user_messages = Message.objects.filter(user=request.user).order_by('-created_at')[:10]  # 10 ostatnich wiadomości
 
     if request.method == 'POST' and 'amount' in request.POST:
         try:
@@ -102,7 +103,8 @@ def dashboard(request):
 
     return render(request, 'bets/dashboard.html', {
         'profile': profile,
-        'user_bets': user_bets
+        'user_bets': user_bets,
+        'user_messages': user_messages
     })
 
 @login_required(login_url='login')

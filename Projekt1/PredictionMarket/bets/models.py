@@ -36,6 +36,7 @@ class Event(models.Model):
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField()
+    winning_option = models.ForeignKey('Option', on_delete=models.SET_NULL, null=True, blank=True, related_name='won_events')
 
     def __str__(self):
         return self.title
@@ -109,3 +110,33 @@ class Bet(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def calculate_winnings(self):
+        """Oblicza wygrane na podstawie kursu i kwoty zakładu"""
+        if not self.is_resolved:
+            return None
+        return self.amount * float(self.option.odds)
+
+
+# 6. Model komunikatów dla użytkowników
+class Message(models.Model):
+    MESSAGE_TYPES = [
+        ('win', 'Wygrana'),
+        ('loss', 'Przegrana'),
+        ('info', 'Informacja'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages')
+    bet = models.ForeignKey(Bet, on_delete=models.CASCADE, related_name='messages', null=True, blank=True)
+    message_type = models.CharField(max_length=10, choices=MESSAGE_TYPES, default='info')
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # kwota wygranej/przegrany/info
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"[{self.get_message_type_display()}] {self.title} - {self.user.username}"
