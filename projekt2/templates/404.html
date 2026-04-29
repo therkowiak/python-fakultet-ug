@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center mt-5">
+    <h1 class="display-1 text-warning">404</h1>
+    <h2>Ups! Zgubiliśmy się...</h2>
+    <p class="lead">Strona, której szukasz, nie istnieje lub została przeniesiona.</p>
+    <a href="{{ url_for('main.index') }}" class="btn btn-primary mt-3">Wróć na stronę główną</a>
+</div>
+{% endblock %}

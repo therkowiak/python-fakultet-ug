@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row mb-5 align-items-center">
+    <div class="col">
+        <h2 class="mb-0">> TWÓJ_PANEL_INWESTORA</h2>
+    </div>
+    <div class="col text-end">
+        <a href="{{ url_for('main.search') }}" class="btn btn-success">+ DODAJ_NOWY_SYGNAŁ</a>
+    </div>
+</div>
+
+<div class="row">
+    {% for stock in stocks %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fs-4">{{ stock.symbol }}</span>
+                <span class="price-display">${{ stock.price }}</span>
+            </div>
+            
+            <div class="card-body d-flex flex-column">
+                <div class="mb-3">
+                    <span class="text-muted">POZIOM_ALARMOWY:</span> 
+                    {% if stock.alert_price %}
+                        <strong class="text-light">${{ stock.alert_price }}</strong>
+                    {% else %}
+                        <span class="text-muted">BRAK</span>
+                    {% endif %}
+                </div>
+                
+                <div class="tradingview-widget-container flex-grow-1 mb-4" style="min-height: 220px; position: relative;">
+                  <div class="tradingview-widget-container__widget" style="height:100%; width:100%; position: absolute; top:0; left:0;"></div>
+                  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
+                  {
+                  "symbol": "{{ stock.symbol }}",
+                  "width": "100%",
+                  "height": "100%",
+                  "locale": "pl",
+                  "dateRange": "1M",
+                  "colorTheme": "dark",
+                  "isTransparent": true,
+                  "autosize": true,
+                  "largeChartUrl": ""
+                  }
+                  </script>
+                </div>
+
+                <form action="{{ url_for('main.delete_stock', stock_id=stock.id) }}" method="POST" class="mt-auto">
+                    <button type="submit" class="btn btn-outline-danger w-100">USUŃ_Z_PANELU</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center mt-5">
+        <div class="card p-5 border-secondary">
+            <h4 class="mb-3">> STATUS: BRAK_DANYCH</h4>
+            <p class="text-muted mb-4">Baza danych nie zawiera obecnie żadnych obserwowanych symboli.</p>
+            <div>
+                <a href="{{ url_for('main.search') }}" class="btn btn-primary">WYSZUKAJ_SPÓŁKĘ</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

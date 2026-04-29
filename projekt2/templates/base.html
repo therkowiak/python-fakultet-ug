@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binturong Signals</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+        background-color: #080A0E; 
+        color: #5E96C3; 
+        font-family: 'IBM Plex Mono', monospace;
+        font-size: 1.1rem; /* IBM Plex Mono */
+        font-weight: 400; 
+        line-height: 1.6; 
+        
+        
+        text-shadow: 
+            0 0 2px rgba(94, 150, 195, 0.6), 
+            0 0 8px rgba(94, 150, 195, 0.2); 
+    }
+
+
+    body::after {
+        content: " ";
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+        background-size: 100% 4px;
+        z-index: 999;
+        pointer-events: none;
+    }
+        h1, h2, h3, h4, h5, h6 { font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Pasek nawigacji */
+        .navbar { background-color: #040507 !important; border-bottom: 2px solid #5E96C3; padding: 5px 0;}
+        .navbar-brand { color: #5E96C3 !important; font-weight: bold; letter-spacing: 3px; font-size: 1.5rem;}
+        .nav-link { color: #437194 !important; font-weight: bold;}
+        .nav-link:hover { color: #8ABCE5 !important; text-shadow: 0 0 8px rgba(94, 150, 195, 0.6); }
+        
+        /* Karty i kontenery */
+        .card { 
+            background-color: #0A1016; 
+            border: 1px solid #5E96C3; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
+            overflow: hidden; 
+        }
+        .card-header { 
+            background-color: #0D161F; 
+            border-bottom: 1px solid #5E96C3; 
+            color: #5E96C3; 
+            border-radius: 0; 
+            font-weight: bold;
+            padding: 12px 15px;
+        }
+        .card-body { padding: 20px; }
+        
+        /* Przyciski */
+        .btn { border-radius: 3px; text-transform: uppercase; font-weight: bold; transition: all 0.2s ease-in-out; letter-spacing: 1px;}
+        .btn-primary, .btn-success, .btn-outline-dark, .btn-info {
+            background-color: #040507; color: #5E96C3; border: 1px solid #5E96C3; 
+        }
+        .btn-primary:hover, .btn-success:hover, .btn-outline-dark:hover, .btn-info:hover {
+            background-color: #5E96C3; color: #040507; box-shadow: 0 0 12px rgba(94, 150, 195, 0.4);
+        }
+        .btn-danger, .btn-outline-danger {
+            background-color: #040507; color: #C35E5E; border: 1px solid #C35E5E;
+        }
+        .btn-danger:hover, .btn-outline-danger:hover {
+            background-color: #C35E5E; color: #040507; box-shadow: 0 0 12px rgba(195, 94, 94, 0.4);
+        }
+        
+        /* Formularze */
+        .form-control, .input-group-text {
+            background-color: #0A1016; color: #5E96C3; border: 1px solid #365570; border-radius: 3px; font-family: inherit; padding: 10px;
+        }
+        .form-control:focus {
+            background-color: #0E1721; color: #ffffff; border-color: #5E96C3; box-shadow: none; outline: none;
+        }
+        .form-control::placeholder { color: #2A455C; }
+        
+        /* Alerty */
+        .alert { background-color: #0D161F; border: 1px solid #5E96C3; color: #5E96C3; border-radius: 3px; }
+        .alert-danger { border-color: #C35E5E; color: #C35E5E; background-color: #1A0D0D; }
+        .alert-warning { border-color: #C3B45E; color: #C3B45E; background-color: #1A180D; }
+        
+        /* Teksty specjalne */
+        .text-muted { color: #437194 !important; }
+        .text-primary, .text-success, .text-dark { color: #5E96C3 !important; }
+        .price-display { font-size: 1.8rem; letter-spacing: 1px; color: #8ABCE5; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg mb-5">
+    <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url_for('main.index') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" 
+                     alt="Logo" 
+                     style="height: 150px; width: auto; margin-right: 12px; filter: drop-shadow(0 0 5px rgba(94, 150, 195, 0.5));">
+                <span>> BINTURONG_SIGNALS_</span>
+            </a>
+        
+        <div class="navbar-nav ms-auto">
+            {% if current_user.is_authenticated %}
+                <span class="nav-item nav-link text-light me-3">USER: {{ current_user.username }}</span>
+                <a class="nav-item nav-link" href="{{ url_for('main.profile') }}">[USTAWIENIA]</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">[WYLOGUJ]</a>
+            {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('auth.login') }}">[LOGOWANIE]</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.register') }}">[REJESTRACJA]</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mb-4">SYS_MSG: {{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
