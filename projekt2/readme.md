@@ -86,10 +86,28 @@ Gdy cena wybranej akcji spadnie poniżej zdefiniowanego przez użytkownika pozio
 - `app.py` – główny plik aplikacji, konfiguracja serwera, maila i harmonogramu zadań (APScheduler)  
 - `models.py` – definicje modeli bazodanowych (`User`, `Stock`)  
 - `routes/` – katalog zawierający blueprinty (logika tras)  
+- `templates/` – katalog z szablonami Jinja2
 - `test_app.py` – zautomatyzowane testy jednostkowe  
 - `mailAlertTest.py` – skrypt do manualnego testowania systemu powiadomień  
 - `requirements.txt` – lista zależności projektowych  
 
+---
+## 6. 
+Aplikacja wykorzystuje szablony Jinja2 oparte na wspólnym szablonie bazowym base.html. Wszystkie widoki utrzymane są w spójnym, ciemnym, technicznym stylu (IBM Plex Mono + niebieska kolorystyka cyber/inwestycyjna).
+**Szablon bazowy**
+ - base.html – wspólny layout całej aplikacji (navbar, style CSS, logo).
+
+**Główne widoki**
+ -`index.html` - / - Strona główna (landing page) z powitaniem i przyciskami do logowania/rejestracji.
+ -`register.html` - /register - Formularz rejestracji nowego użytkownika (username, email, hasło).
+ -`login.html` - /login - Formularz logowania (email + hasło).
+ -`dashboard.html` - /dashboard - Główny panel użytkownika. Wyświetla karty obserwowanych akcji z aktualną ceną, poziomem alarmowym, widgetem TradingView oraz opcją usunięcia.
+ -`search.html` - /search - Wyszukiwarka tickerów (np. AAPL). Po wyszukaniu pokazuje aktualną cenę, widget TradingView oraz formularz dodania akcji z opcjonalnym progiem alertu.
+ -`profile.html` - /profile - Edycja profilu – zmiana nazwy użytkownika i adresu e-mail (używanego do alertów).
+
+**Strony błędów**
+- `404.html` - 404 - Niestandardowa strona błędu 404 z humorystycznym komunikatem.
+- `500.html` - 500 - Strona błędu wewnętrznego serwera.
 ---
 
 ## 6. Bibliografia i źródła
@@ -101,6 +119,7 @@ Gdy cena wybranej akcji spadnie poniżej zdefiniowanego przez użytkownika pozio
 - Flask-Login (v0.6.3) – zarządzanie sesjami użytkowników  
 - yfinance (v0.2.40) – pobieranie danych giełdowych z Yahoo Finance  
 - APScheduler (v3.10.4) – planowanie zadań w tle (sprawdzanie cen co 1 minutę)  
+- Flask-Mail – wysyłanie powiadomień e-mail
 
 ---
 
