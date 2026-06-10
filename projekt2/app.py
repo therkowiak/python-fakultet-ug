@@ -7,6 +7,9 @@ import yfinance as yf
 from models import db, User, Stock
 from routes.auth import auth_bp
 from routes.main import main_bp
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 mail = Mail()
 
@@ -41,7 +44,7 @@ def check_price_alerts(app):
 def create_app():
     app = Flask(__name__)
     
-    app.config['SECRET_KEY'] = 'twoj-super-tajny-klucz'
+    app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'domyslny-klucz-awaryjny')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gielda.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -49,8 +52,8 @@ def create_app():
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = '***REDACTED***' # EMAIL
-    app.config['MAIL_PASSWORD'] = '***REDACTED***' # HASŁO APLIKACJI
+    app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+    app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 
     db.init_app(app)
     mail.init_app(app)
