@@ -16,7 +16,13 @@
 Główną funkcjonalnością systemu jest możliwość ustawiania personalizowanych alertów cenowych.  
 Gdy cena wybranej akcji spadnie poniżej zdefiniowanego przez użytkownika poziomu, system automatycznie wysyła powiadomienie e-mail.
 
-**Binturong AI (Nowość!):** Zintegrowany asystent sztucznej inteligencji oparty na modelu **Gemini 2.5 Flash**. Dostępny w formie okna terminala dla zalogowanych użytkowników. Pomaga w analizie technicznej, konsultacji strategii oraz interpretacji bieżących trendów rynkowych dla wyszukiwanych spółek.
+### (NOWOŚĆ) Integracja asystenta Gemini AI (Binturong AI)
+
+Do systemu dodano interaktywnego czatbota, który pełni rolę analityka giełdowego i pomaga użytkownikom w interpretacji sytuacji rynkowej. Funkcjonalność została zrealizowana w następujący sposób:
+
+* **Backend (`routes/main.py`):** Wykorzystano oficjalną bibliotekę `google-generativeai` do komunikacji z modelem **Gemini 2.5 Flash**. Utworzono dedykowany endpoint przyjmujący zapytania (POST) i narzucający modelowi odpowiedni kontekst (System Prompt) – asystent odpowiada w profesjonalnym, hakersko-analitycznym tonie.
+* **Bezpieczeństwo (`.env`):** Zrezygnowano z jawnego wpisywania haseł w kodzie. Klucz API Google oraz dane dostępowe do poczty są teraz bezpiecznie wczytywane z pliku środowiskowego za pomocą biblioteki `python-dotenv`.
+* **Frontend (`templates/base.html`):** Interfejs czatu zrealizowano jako pływający widżet (floating widget) zaimplementowany w głównym szablonie HTML. Dzięki temu asystent jest płynnie dostępny na każdej podstronie, ale wyłącznie dla zalogowanych użytkowników. Komunikacja z serwerem odbywa się asynchronicznie (Fetch API) bez przeładowywania strony.
 ---
 
 ## 3. Realizacja wymagań technicznych
