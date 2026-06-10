@@ -16,6 +16,7 @@
 Główną funkcjonalnością systemu jest możliwość ustawiania personalizowanych alertów cenowych.  
 Gdy cena wybranej akcji spadnie poniżej zdefiniowanego przez użytkownika poziomu, system automatycznie wysyła powiadomienie e-mail.
 
+**Binturong AI (Nowość!):** Zintegrowany asystent sztucznej inteligencji oparty na modelu **Gemini 2.5 Flash**. Dostępny w formie okna terminala dla zalogowanych użytkowników. Pomaga w analizie technicznej, konsultacji strategii oraz interpretacji bieżących trendów rynkowych dla wyszukiwanych spółek.
 ---
 
 ## 3. Realizacja wymagań technicznych
@@ -65,16 +66,24 @@ Gdy cena wybranej akcji spadnie poniżej zdefiniowanego przez użytkownika pozio
 1. Zainstaluj wymagane biblioteki:
    ```bash
    pip install -r requirements.txt
+   pip install google-generativeai
    ```
 
-2. Uruchom aplikację:
+
+2. Konfiguracja klucza Gemini AI:
+
+W głównym folderze projektu (tam, gdzie znajduje się app.py) utwórz plik tekstowy o nazwie api_key.txt.
+
+Wklej w nim swój darmowy klucz API wygenerowany w Google AI Studio.
+
+3. Uruchom aplikację:
    ```bash
    python app.py
    ```
 
-3. System automatycznie zainicjalizuje bazę danych `gielda.db` przy pierwszym uruchomieniu.
+4. System automatycznie zainicjalizuje bazę danych `gielda.db` przy pierwszym uruchomieniu.
 
-4. Domyślny adres aplikacji:
+5. Domyślny adres aplikacji:
    ```
    http://127.0.0.1:5000
    ```
