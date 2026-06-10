@@ -132,5 +132,112 @@
         
         {% block content %}{% endblock %}
     </div>
+
+    {% if current_user.is_authenticated %}
+    <button id="ai-toggle" class="btn btn-outline-info" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; border-radius: 50%; width: 60px; height: 60px; font-size: 1.5rem; font-weight: bold; box-shadow: 0 0 15px rgba(94, 150, 195, 0.4); background-color: #040507;">
+        AI
+    </button>
+
+    <div id="ai-window" class="card" style="display: none; position: fixed; bottom: 100px; right: 30px; width: 350px; height: 450px; z-index: 1000; flex-direction: column; border: 1px solid #5E96C3; box-shadow: 0 0 20px rgba(0,0,0,0.9);">
+        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #0D161F; padding: 10px 15px;">
+            <span style="font-weight: bold; letter-spacing: 1px;">> BINTURONG_AI_</span>
+            <button id="ai-close" style="background: none; border: none; color: #C35E5E; font-size: 1.2rem; cursor: pointer; font-weight: bold;">[X]</button>
+        </div>
+        
+        <div class="card-body" id="ai-messages" style="overflow-y: auto; flex-grow: 1; background-color: #0A1016; display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem;">
+            <div class="text-start">
+                <span style="background-color: #0D161F; padding: 8px 12px; border-radius: 3px; border: 1px solid #365570; display: inline-block; color: #8ABCE5; text-shadow: none; font-weight: 500;">
+    SYS_MSG: Nawiązano połączenie z modelem Gemini. W czym pomóc?
+</span>
+            </div>
+        </div>
+        
+        <div class="card-footer" style="background-color: #0D161F; padding: 10px; border-top: 1px solid #5E96C3;">
+            <div class="input-group">
+                <input type="text" id="ai-input" class="form-control" placeholder="Wprowadź zapytanie..." style="border-radius: 0;">
+                <button id="ai-send" class="btn btn-primary" style="border-radius: 0;">WYŚLIJ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const aiToggle = document.getElementById('ai-toggle');
+        const aiWindow = document.getElementById('ai-window');
+        const aiClose = document.getElementById('ai-close');
+        const aiSend = document.getElementById('ai-send');
+        const aiInput = document.getElementById('ai-input');
+        const aiMessages = document.getElementById('ai-messages');
+
+        // Pokaż / Ukryj
+        aiToggle.addEventListener('click', () => {
+            aiWindow.style.display = 'flex';
+            aiToggle.style.display = 'none';
+        });
+        aiClose.addEventListener('click', () => {
+            aiWindow.style.display = 'none';
+            aiToggle.style.display = 'block';
+        });
+
+        // Wysłanie wiadomości
+        async function sendMessage() {
+            const message = aiInput.value.trim();
+            if (!message) return;
+
+            // Dodaj wiadomość usera
+            aiMessages.innerHTML += `
+                <div class="text-end">
+                    <span style="background-color: #1A2735; padding: 8px 12px; border-radius: 3px; border: 1px solid #5E96C3; display: inline-block; color: #fff;">
+                        USER: ${message}
+                    </span>
+                </div>`;
+            aiInput.value = '';
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+
+            // Dodaj status "pisze..."
+            const loadingId = 'loading-' + Date.now();
+            aiMessages.innerHTML += `
+                <div class="text-start" id="${loadingId}">
+                    <span style="background-color: #0D161F; padding: 8px 12px; border-radius: 3px; border: 1px solid #365570; display: inline-block; color: #8ABCE5; text-shadow: none; font-weight: 500;">
+                        Przetwarzanie danych...
+                    </span>
+                </div>`;
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+
+            // Zapytanie do backendu
+            try {
+                const response = await fetch("{{ url_for('main.ask_gemini') }}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: message })
+                });
+                const data = await response.json();
+                
+                document.getElementById(loadingId).remove();
+
+                if (data.response) {
+                    // Konwersja Markdown na HTML
+                    let formattedResponse = data.response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+                    aiMessages.innerHTML += `
+                        <div class="text-start">
+                            <span style="background-color: #0D161F; padding: 8px 12px; border-radius: 3px; border: 1px solid #365570; display: inline-block; color: #8ABCE5; text-shadow: none; font-weight: 500;">
+                            AI: ${formattedResponse}
+                            </span>
+                        </div>`;
+                } else {
+                    aiMessages.innerHTML += `<div class="text-start text-danger">BŁĄD: ${data.error}</div>`;
+                }
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                aiMessages.innerHTML += `<div class="text-start text-danger">BŁĄD: Utracono połączenie z serwerem.</div>`;
+            }
+            aiMessages.scrollTop = aiMessages.scrollHeight;
+        }
+
+        aiSend.addEventListener('click', sendMessage);
+        aiInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+    {% endif %}
 </body>
 </html>
