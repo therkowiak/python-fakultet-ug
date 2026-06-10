@@ -16,7 +16,7 @@
 Główną funkcjonalnością systemu jest możliwość ustawiania personalizowanych alertów cenowych.  
 Gdy cena wybranej akcji spadnie poniżej zdefiniowanego przez użytkownika poziomu, system automatycznie wysyła powiadomienie e-mail.
 
-### (NOWOŚĆ) Integracja asystenta Gemini AI (Binturong AI)
+### (NOWOŚĆ) 🤖 Integracja asystenta Gemini AI (Binturong AI)
 
 Do systemu dodano interaktywnego czatbota, który pełni rolę analityka giełdowego i pomaga użytkownikom w interpretacji sytuacji rynkowej. Funkcjonalność została zrealizowana w następujący sposób:
 
