@@ -1,0 +1,9 @@
+# Bazy danych
+*.sqlite3
+db.sqlite3
+*.db
+
+# Pliki tymczasowe Pythona
+__pycache__/
+*.py[cod]
+*$py.class
